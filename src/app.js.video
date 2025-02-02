@@ -19,3 +19,30 @@ class App {
 
 // Exporta a instância do Express configurada
 export default new App().app;
+
+///
+
+import express from 'express';
+const app = express();
+
+class App{
+    constructor(){
+        this.app = express();
+        this.middlewares();
+        this.routes();
+    }
+
+    middlewares(){
+        this.app.use(express.json());
+    }
+
+    routes(){
+        
+    }
+
+}
+
+export default app 
+
+
+

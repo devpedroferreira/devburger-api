@@ -1,17 +1,21 @@
 {
-  "name": "devburger-server-api",
+  "name": "devburger-api",
   "version": "1.0.0",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "startserver": "node --watch server.js"
+    "startserver": "node --watch ./src/server.js"
   },
   "keywords": [],
   "author": "Pedro Ferreira",
   "url": "https://github.com/devpedroferreira",
   "license": "ISC",
-  "description": "Server DevBurger Api.",
+  "description": "Servidor Backend DevBurger ",
   "dependencies": {
     "express": "^4.21.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.9"
   }
 }
