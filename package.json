@@ -7,8 +7,10 @@
   },
   "keywords": [],
   "author": "Pedro Ferreira",
-   "url": "https://github.com/devpedroferreira",
-
+  "url": "https://github.com/devpedroferreira",
   "license": "ISC",
-  "description": "Server DevBurger Api."
+  "description": "Server DevBurger Api.",
+  "dependencies": {
+    "express": "^4.21.2"
+  }
 }
