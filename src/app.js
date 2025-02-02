@@ -14,6 +14,7 @@ class App {
         this.routes(); // 
     }
 
+    
     /**
      * Configura os middlewares da aplicação.
      * Atualmente, está configurado para usar o middleware express.json(),
