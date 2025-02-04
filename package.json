@@ -1,11 +1,15 @@
 {
   "name": "devburger-api",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "main": "./src/server.js",
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "startserver": "node --watch ./src/server.js"
+    "startserver": "node --watch ./src/server.js",
+    "migrate": "node -r esm ./node_modules/.bin/sequelize db:migrate",
+    "migrate:undo": "node -r esm ./node_modules/.bin/sequelize db:migrate:undo",
+    "seed": "node -r esm ./node_modules/.bin/sequelize db:seed:all",
+    "seed:undo": "node -r esm ./node_modules/.bin/sequelize db:seed:undo:all"
   },
   "keywords": [],
   "author": "Pedro Ferreira",
@@ -13,12 +17,14 @@
   "license": "ISC",
   "description": "Servidor Backend DevBurger ",
   "dependencies": {
+    "esm": "^3.2.25",
     "express": "^4.21.2",
     "pg": "^8.13.1",
     "pg-hstore": "^2.3.4",
     "sequelize": "^6.37.5"
   },
   "devDependencies": {
+    "mysql2": "^3.12.0",
     "nodemon": "^3.1.9",
     "sequelize-cli": "^6.6.2"
   }

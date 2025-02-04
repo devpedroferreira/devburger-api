@@ -1,11 +1,11 @@
-module.exports = {
-    dialect: 'postgres',
-    host: 'localhost',
-    port: 2345,
-    username: 'postgres',
-    password: '2310postgres',
-    database: 'devburger',
-    define: {
-        timestamps: true,
-    },
+export const dialect = 'postgres';
+export const host = 'localhost';
+export const port = 5432;
+export const username = 'postgres';
+export const password = '2310postgres';
+export const database = 'devburger';
+export const define = {
+    timestamps: true,
+    underscored: true,
+    underscoredAll: true,
 };
