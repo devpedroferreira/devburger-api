@@ -1,3 +1,5 @@
+import Sequelize from 'sequelize';
+
 class User extends Model {
     static init(sequelize) {
         super.init(
@@ -17,8 +19,12 @@ class User extends Model {
                         isEmail: true,
                     },
                 },
-                password_hash: Sequelize.STRING,
-                admin: Sequelize.BOOLEAN,
+                password_hash: {
+                    type: Sequelize.STRING,
+                },
+                admin: {
+                    type: Sequelize.BOOLEAN,
+                },
             },
             {
                 sequelize,
