@@ -1,6 +1,6 @@
 import express from 'express';
 import routes from './routes.js'; // Importe suas rotas aqui
-
+import './database/index.js'
 class App {
     constructor() {
         this.app = express(); // Cria a instância do Express

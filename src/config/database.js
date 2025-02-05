@@ -1,11 +1,16 @@
-export const dialect = 'postgres';
-export const host = 'localhost';
-export const port = 5432;
-export const username = 'postgres';
-export const password = '2310postgres';
-export const database = 'devburger';
-export const define = {
-    timestamps: true,
-    underscored: true,
-    underscoredAll: true,
+// src/config/database.js
+const configDatabase = {
+    dialect: 'postgres',
+    host: 'localhost',
+    port: 5432,
+    username: 'postgres',
+    password: '2310postgres',
+    database: 'devburger',
+    define: {
+        timestamps: true,
+        underscored: true,
+        underscoredAll: true,
+    },
 };
+
+export default configDatabase;

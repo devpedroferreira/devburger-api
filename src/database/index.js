@@ -1,17 +1,23 @@
 import Sequelize from 'sequelize';
+// conf do banco
+import configDatabase from '../config/database.js';
+import User from '../app/models/User.js';
 
-import User from './models/User';
+
+
+const models = [User];
 
 class Database {
     constructor(){
-        this.init();
+    this.init();
 
     };
 
+    // reutiliza a mesma conexao com o banco, optimiza o fluxo.
     init(){
-        this.connection = new Sequelize();
+        this.connection = new Sequelize(configDatabase);
+        models.forEach((model) => model.init(this.connection));
     };
 };
 
-
-export default Database();
+export default new Database();
