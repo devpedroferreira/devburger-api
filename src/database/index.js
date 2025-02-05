@@ -14,7 +14,7 @@ class Database {
     // reutiliza a mesma conexao com o banco, optimiza o fluxo.
     init(){
         this.connection = new Sequelize(configDatabase);
-        models.forE((model) => model.init(this.connection));
+        models.forEach((model) => model.init(this.connection));
     };
 };
 

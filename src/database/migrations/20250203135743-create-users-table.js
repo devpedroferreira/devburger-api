@@ -24,7 +24,6 @@ export async function up(queryInterface, Sequelize) {
       allowNull: false,
     },
 
-
     password_hash: {
       type: Sequelize.STRING,
       allowNull: false,
