@@ -23,7 +23,12 @@ class UserController {
                 password_hash,
                 admin
             });
-            return res.status(201).json(user);
+            return res.status(201).json({
+                id: user.id,
+                name,
+                email,
+                admin
+            })
         } catch (error) {
             if (error.name === 'SequelizeUniqueConstraintError') {
                 return res.status(400).json({ error: 'Email already exists' });
