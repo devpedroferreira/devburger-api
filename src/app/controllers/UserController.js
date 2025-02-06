@@ -15,7 +15,7 @@ class UserController {
     async store(req, res) {
         // try catach to handle error
         try {
-            const {name, email, password_hash, admin} = request.body;
+            const {name, email, password_hash, admin} = req.body;
             const user = await User.create({
                 id: v4(),
                 name,
