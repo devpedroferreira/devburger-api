@@ -17,7 +17,7 @@ class UserController {
         try {
             // vilid data with yup lib            
             const schema = Yup.object().shape({
-                name: Yup.string().required('Digite o nome, somente Letras.'),
+                name: Yup.string().matches(/^[A-Za-zÀ-ÖØ-öø-ÿ\s]+$/, 'Digite um nome, somente letras.').required('Digite o nome valido, somente letras.'),
                 email: Yup.string().email('Digite um email valido, exemplo@email.com ').required('Email é obrigatório'),
                 password_hash: Yup.string().min(6, 'A senha deve ter no minímo 6 character.').required('Senha é obrigatório.'),
                 admin: Yup.boolean()
