@@ -7,7 +7,6 @@ show => mostrar um
 update => atualizar
 delete => delete
 */
-
 import {v4} from 'uuid';
 import User from '../../app/models/User.js';
 import * as Yup from 'yup';
