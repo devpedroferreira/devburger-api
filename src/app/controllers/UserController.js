@@ -17,7 +17,7 @@ class UserController {
         try {
             // vilid data with yup lib            
             const schema = Yup.object().shape({
-                name: Yup.string().matches(/^[A-Za-zÀ-ÖØ-öø-ÿ\s]+$/, 'Digite um nome, somente letras.').required('Digite o nome valido, somente letras.'),
+                name: Yup.string().matches(/^[A-Za-zÀ-ÖØ-öø-ÿ\s]+$/, 'O nome deve conter somente letras.').required('Digite o nome valido, somente letras.'),
                 email: Yup.string().email('Digite um email valido, exemplo@email.com ').required('Email é obrigatório'),
                 password_hash: Yup.string().min(6, 'A senha deve ter no minímo 6 character.').required('Senha é obrigatório.'),
                 admin: Yup.boolean()
@@ -26,7 +26,24 @@ class UserController {
             // validar todos os campos e retornar todos os erros encontrados.
             await schema.validate(req.body, {abortEarly: false});
 
+            // criando usuario
             const {name, email, password_hash, admin} = req.body;
+            // aqui faria o if se o email ja existe antes de criar user
+            /*
+            
+            // proura o email na tabela
+            const userExist = await User.findOne({
+                where:{
+                    email,
+                },
+            });
+
+            if (userExist){
+               return res.status(400).json({error: Email ja existe}) 
+            };
+
+            */
+
             const user = await User.create({
                 id: v4(),
                 name,
@@ -34,6 +51,7 @@ class UserController {
                 password_hash,
                 admin
             });
+            // retorno do usuario criado
             return res.status(201).json({
                 id: user.id,
                 name,
