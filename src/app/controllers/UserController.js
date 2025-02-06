@@ -10,6 +10,7 @@ delete => delete
 import {v4} from 'uuid';
 import User from '../../app/models/User.js';
 import * as Yup from 'yup';
+import bcrypt from 'bcryptjs';
 
 class UserController {
     async store(req, res) {
@@ -30,7 +31,7 @@ class UserController {
             const {name, email, password_hash, admin} = req.body;
             // aqui faria o if se o email ja existe antes de criar user
             /*
-            
+
             // proura o email na tabela
             const userExist = await User.findOne({
                 where:{
@@ -43,12 +44,14 @@ class UserController {
             };
 
             */
+            // criptografando a senha do usuario
+            const hashedPassword = await bcrypt.hash(password_hash, 3);
 
             const user = await User.create({
                 id: v4(),
                 name,
                 email,
-                password_hash,
+                password_hash: hashedPassword,
                 admin
             });
             // retorno do usuario criado
