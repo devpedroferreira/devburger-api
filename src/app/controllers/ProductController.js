@@ -24,7 +24,7 @@ class ProductController {
       
       const product = await Product.create({
         name,
-        price: price.toString(), // Converta para string se a migration usar STRING
+        price, 
         category,
         path
       });
