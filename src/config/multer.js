@@ -1,17 +1,17 @@
 import multer from 'multer';
-import { resolveSoa } from 'node:dns';
-import { v4 } from 'uuid';
+import { v4 as uuidv4 } from 'uuid';
+import { extname, resolve } from 'path';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
 
-// fotos vai ficar em ./uploads
-import { extname, resolve } from 'node:path';
-import { fileURLToPath } from 'node:url';
-
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 export default {
-    storage:multer.diskStorage({
+    storage: multer.diskStorage({
         destination: resolve(__dirname, '..', '..', 'uploads'),
         filename: (request, file, callback) => {
-            return callback(null, v4() + extname(file.originalname))
+            return callback(null, uuidv4() + extname(file.originalname));
         }
     })
 };
