@@ -20,6 +20,7 @@ class ProductController {
        await schema.validate(req.body, { abortEarly: false });
 
       } catch (error) {
+
         // Tratamento de erros
         if (error instanceof Yup.ValidationError) {
           return res.status(400).json({ errors: error.errors });
@@ -27,7 +28,7 @@ class ProductController {
   
         // Erros do Sequelize (ex: unique constraint)
         if (error.name === 'SequelizeUniqueConstraintError') {
-          return res.status(400).json({ error: 'Produto já existe' }); // Ajuste conforme necessidade
+          return res.status(400).json({ error: 'Nome do Produto já existe' }); // Ajuste conforme necessidade
         };
   
         console.error('Erro no servidor:', error); // Log para debug

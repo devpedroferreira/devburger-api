@@ -4,7 +4,7 @@ class Product extends Model {
     static init(sequelize){
         super.init(
             {
-            name: Sequelize.STRING,
+            name: Sequelize.STRING, unique,
             price: Sequelize.NUMBER,
             category: Sequelize.STRING,
             path: Sequelize.STRING,
