@@ -13,6 +13,7 @@ export async function up(queryInterface, Sequelize) {
     name: {
       type: Sequelize.STRING,
       allowNull: false,
+      unique: true
     },
     price: {
       type: Sequelize.DECIMAL,
