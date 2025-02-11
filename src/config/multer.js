@@ -7,6 +7,7 @@ import { dirname } from 'path';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
+// fotos para pasta upload
 export default {
     storage: multer.diskStorage({
         destination: resolve(__dirname, '..', '..', 'uploads'),

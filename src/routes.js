@@ -15,6 +15,8 @@ router.post('/users', UserController.store);
 router.post('/session', SessionController.store);
 // Product
 router.post('products', upload.single('file'), ProductController.store);
+//
+router.get('products', ProductController.index);
 
 //exportando as rotas
 export default router;

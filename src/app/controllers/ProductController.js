@@ -13,38 +13,50 @@ class ProductController {
           .positive('O preço deve ser um valor positivo')
           .required('Preço é obrigatório'),
         category: Yup.string().required('Categoria é obrigatória'),
-        path: Yup.string().required('Caminho da imagem é obrigatório') // Adicione se necessário
+        //path: Yup.string().required('Caminho da imagem é obrigatório') // Adicione se necessário
       });
 
-      // Validação dos dados
-      await schema.validate(req.body, { abortEarly: false });
+       // Validação dos dados
+       await schema.validate(req.body, { abortEarly: false });
 
+      } catch (error) {
+        // Tratamento de erros
+        if (error instanceof Yup.ValidationError) {
+          return res.status(400).json({ errors: error.errors });
+        };
+  
+        // Erros do Sequelize (ex: unique constraint)
+        if (error.name === 'SequelizeUniqueConstraintError') {
+          return res.status(400).json({ error: 'Produto já existe' }); // Ajuste conforme necessidade
+        };
+  
+        console.error('Erro no servidor:', error); // Log para debug
+        return res.status(500).json({ error: 'Erro interno do servidor' });
+      };
+
+
+
+      // pegano o filename da imagem, mudando para variavel filePath
+       const { filename: filePath } = req.file;
       // Criação do produto no banco de dados
-      const { name, price, category, path } = req.body;
+      const { name, price, category, path: imagePath } = req.body;
       
       const product = await Product.create({
         name,
         price, 
         category,
-        path
+        path: imagePath
       });
 
       return res.status(201).json(product);
 
-    } catch (error) {
-      // Tratamento de erros
-      if (error instanceof Yup.ValidationError) {
-        return res.status(400).json({ errors: error.errors });
-      }
+   
+  }
 
-      // Erros do Sequelize (ex: unique constraint)
-      if (error.name === 'SequelizeUniqueConstraintError') {
-        return res.status(400).json({ error: 'Produto já existe' }); // Ajuste conforme necessidade
-      }
-
-      console.error('Erro no servidor:', error); // Log para debug
-      return res.status(500).json({ error: 'Erro interno do servidor' });
-    }
+  // get all products in database
+  async index() {
+    const products = await Product.findAll();
+    return res.json(products);
   }
 }
 
