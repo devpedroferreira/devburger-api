@@ -52,13 +52,13 @@ class ProductController {
       return res.status(201).json(product);
 
    
-  }
+  };
 
   // get all products in database
   async index() {
     const products = await Product.findAll();
     return res.json(products);
-  }
-}
+  };
+};
 
 export default new ProductController();
