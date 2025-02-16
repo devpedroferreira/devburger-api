@@ -11,12 +11,13 @@ const upload = multer(multerConfig);
 const router = Router();
 // rota post
 router.post('/users', UserController.store);
+
 // session
 router.post('/session', SessionController.store);
 // Product
-router.post('products', upload.single('file'), ProductController.store);
+router.post('/products', upload.single('file'), ProductController.store);
 //
-router.get('products', ProductController.index);
+router.get('/products', ProductController.index);
 
 //exportando as rotas
 export default router;

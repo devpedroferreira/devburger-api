@@ -29,21 +29,7 @@ class UserController {
 
             // criando usuario
             const {name, email, password_hash, admin} = req.body;
-            // aqui faria o if se o email ja existe antes de criar user
-            /*
-
-            // proura o email na tabela
-            const userExist = await User.findOne({
-                where:{
-                    email,
-                },
-            });
-
-            if (userExist){
-               return res.status(400).json({error: Email ja existe}) 
-            };
-
-            */
+            
             // criptografando a senha do usuario
             const hashedPassword = await bcrypt.hash(password_hash, 3);
 
