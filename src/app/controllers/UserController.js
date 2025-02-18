@@ -1,5 +1,5 @@
 /*
-metodos que vamos usa:
+# metodos que vamos usa:
 
 store => cadastrar/add
 index => Listar varios
@@ -13,7 +13,7 @@ import * as Yup from 'yup';
 import bcrypt from 'bcryptjs';
 
 class UserController {
-    async store(req, res) {
+    async store(req, res) { // recuperando o date
         // try catach to handle error
         try {
             // vilid data with yup lib            
@@ -51,11 +51,11 @@ class UserController {
             // retorna os erros : await schema.validate(res.body, {abortEarly: false});
             if (error.name === 'ValidationError') {
                 return res.status(400).json({error: error.errors});
-            }
+            };
             // erro email
             if (error.name === 'SequelizeUniqueConstraintError') {
                 return res.status(400).json({ error: 'Email already exists' });
-            }
+            };
             return res.status(500).json({ error: 'Internal server error' });
         };  
     };
