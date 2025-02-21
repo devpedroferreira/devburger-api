@@ -6,9 +6,7 @@ class ProductController {
     try {
       // Schema de validação
       const schema = Yup.object().shape({
-        name: Yup.string()
-          .matches(/^[A-Za-zÀ-ÖØ-öø-ÿ\s]+$/, 'O nome deve conter somente letras.')
-          .required('Nome é obrigatório'),
+        name: Yup.string().required('Nome é obrigatório'),
         price: Yup.number() // Altere para DECIMAL se sua migration usar DECIMAL
           .positive('O preço deve ser um valor positivo')
           .required('Preço é obrigatório'),
@@ -37,21 +35,20 @@ class ProductController {
 
 
 
-      // pegano o filename da imagem, mudando para variavel filePath
-       const { filename: filePath } = req.file;
+      // pegando o filename da imagem, mudando para variavel filePath
+       const { filename: path } = req.file;
       // Criação do produto no banco de dados
-      const { name, price, category, path: imagePath } = req.body;
+      const { name, price, category } = req.body;
       
       const product = await Product.create({
         name,
         price, 
         category,
-        path: imagePath
+        path
       });
 
       return res.status(201).json(product);
 
-   
   };
 
   // get all products in database

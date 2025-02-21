@@ -7,7 +7,7 @@ class SessionController {
     async store(req, res){
         const schema = Yup.object().shape({
             email: Yup.string().email('Digite um email valido, exemplo@email.com ').required('Email é obrigatório'),
-            password: Yup.string().min(6,"A senha deve conter no minímo 6 character.").required('Senha é obrigatório'),
+            password: Yup.string().min(6,'A senha deve conter no minímo 6 character.').required('Senha é obrigatório'),
         });
 
         // validated if email and pass are in the correct format.
@@ -25,12 +25,12 @@ class SessionController {
         const user = await User.findOne({where: {email} });
 
         if (!user){
-            return res.status(401).json({error: "Email ou senha incorretos!"});
+            return res.status(401).json({error: 'Email or password incorrect!'});
         };
 
         // verificando se a senha coincide com o hash
         if(!(await bcrypt.compare(password, user.password_hash))){
-            return res.status(401).json({error: "Email ou senha incorretos!"});
+            return res.status(401).json({error: 'Email or password incorrect!'});
         };
 
         //Se tudo estiver correto, retorna os dados do usuaro
@@ -42,7 +42,7 @@ class SessionController {
         });
 
         } catch (error) {
-            return res.status(500).json({ error: "Erro interno no servidor" });
+            return res.status(500).json({ error: 'Erro interno no servidor' });
         };
 
     };
