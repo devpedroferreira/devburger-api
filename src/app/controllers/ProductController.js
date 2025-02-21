@@ -52,7 +52,7 @@ class ProductController {
   };
 
   // get all products in database
-  async index() {
+  async index(req,res) {
     const products = await Product.findAll();
     return res.json(products);
   };
