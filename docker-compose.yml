@@ -2,7 +2,7 @@ version: '3.8'
 services:
   postgres:
     image: postgres:latest
-    container_name: postgres_devburger
+    container_name: postgres-devburger
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: 2310postgres

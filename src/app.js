@@ -13,7 +13,7 @@ class App {
 
     middlewares() {
         this.app.use(express.json()); // Middleware para parsear JSON
-        this.app.use('/product-file', express.static(resolve('..','uploads')));
+        this.app.use('/product-file', express.static(resolve('uploads')));
     };
 
     routes() {
