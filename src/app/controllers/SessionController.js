@@ -3,8 +3,8 @@ import * as Yup from "yup";
 import User from '../models/User.js';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import authConfig from '../../config/auth.js'
-import auth from "../../config/auth.js";
+import authConfig from '../../config/authKey.js'
+
 
 class SessionController {
     async store(req, res){
