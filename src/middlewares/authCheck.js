@@ -18,7 +18,7 @@ const authCheck = (req, res, next) => {
         if (err) {
             return res.status(401).json({ error: 'Invalid token' });
         }
-
+        console.log(decoded)
         req.user = decoded;// Adiciona o usuário decodificado à requisição
         return next(); // continue flux to controller
      });
