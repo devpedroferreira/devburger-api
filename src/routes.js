@@ -2,6 +2,8 @@ import { Router } from "express";
 import UserController from "./app/controllers/UserController.js";
 import SessionController from "./app/controllers/SessionController.js";
 import ProductController from "./app/controllers/ProductController.js";
+import CategoryController from "./app/controllers/CategoryController.js";
+
 // Multer
 import multer from "multer";
 import multerConfig from './config/multer.js';
@@ -22,5 +24,9 @@ router.post('/products', upload.single('file'), ProductController.store);
 // listar os produtos
 router.get('/products', authCheck , ProductController.index);
 
+// Category
+router.post('/categories', CategoryController.store);
+//listar categorias
+router.get('/categories', CategoryController.index);
 // exportando as rotas
 export default router;
