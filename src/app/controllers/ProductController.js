@@ -10,7 +10,7 @@ class ProductController {
         price: Yup.number() // Altere para DECIMAL se sua migration usar DECIMAL
           .positive('O preço deve ser um valor positivo')
           .required('Preço é obrigatório'),
-        category: Yup.string().required('Categoria é obrigatória'),
+          category: Yup.string().required('Categoria é obrigatória'),
         //path: Yup.string().required('Caminho da imagem é obrigatório') // Adicione se necessário
       });
 

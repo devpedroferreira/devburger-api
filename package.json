@@ -6,10 +6,10 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "startserver": "node --watch ./src/server.js",
-    "migrate": "node -r esm ./node_modules/.bin/sequelize db:migrate",
-    "migrate:undo": "node -r esm ./node_modules/.bin/sequelize db:migrate:undo",
-    "seed": "node -r esm ./node_modules/.bin/sequelize db:seed:all",
-    "seed:undo": "node -r esm ./node_modules/.bin/sequelize db:seed:undo:all"
+    "migrate": "npx sequelize-cli db:migrate",
+    "migrate:undo": "npx sequelize-cli db:migrate:undo",
+    "seed": "npx sequelize-cli db:seed:all",
+    "seed:undo": "npx sequelize-cli db:seed:undo:all"
   },
   "keywords": [],
   "author": "Pedro Ferreira",
