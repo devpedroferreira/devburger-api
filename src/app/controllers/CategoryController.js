@@ -7,6 +7,7 @@ class CategoryController {
         // Schema de validação
         const schema = Yup.object().shape({
             name: Yup.string().required('Nome é obrigatório'),
+            description: Yup.string().required('Descrição é obrigatória'),
         });
     
         // Validação dos dados
@@ -29,10 +30,11 @@ class CategoryController {
         };
     
         // Criação da categoria no banco de dados
-        const { name } = req.body;
+        const { name, description } = req.body;
     
         const category = await Category.create({
         name,
+        description
         });
     
         return res.status(201).json(category);
