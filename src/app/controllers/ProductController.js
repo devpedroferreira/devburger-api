@@ -1,24 +1,42 @@
 import * as Yup from 'yup';
 import Product from '../models/Product.js'; // Importe o modelo Product
-
+import Category from '../models/Category.js'; // Importe o modelo Category
 class ProductController {
   async store(req, res) {
     try {
       // Schema de validação
       const schema = Yup.object().shape({
         name: Yup.string().required('Nome é obrigatório'),
-        price: Yup.number() // Altere para DECIMAL se sua migration usar DECIMAL
+        price: Yup.decimal() 
           .positive('O preço deve ser um valor positivo')
           .required('Preço é obrigatório'),
-          category: Yup.string().required('Categoria é obrigatória'),
-        //path: Yup.string().required('Caminho da imagem é obrigatório') // Adicione se necessário
+          category_id: Yup.number().required('Categoria é obrigatória'), 
       });
 
        // Validação dos dados
        await schema.validate(req.body, { abortEarly: false });
 
-      } catch (error) {
+      const {name, price, category_id} = req.body;
 
+      // Verifica se a categoria existe
+      const category = await Category.findByPk(category_id);
+      if (!category) {
+        return res.status(400).json({ error: 'Categoria não encontrada' });
+      };
+
+      // get the filename of the image, changing to filePath variable
+      const { filename: path } = req.file;
+      // Create product in database
+      const product = await Product.create({
+        name,
+        price,
+        category_id,
+        path
+      });
+
+        return res.status(201).json(product);
+
+      } catch (error) {
         // Tratamento de erros
         if (error instanceof Yup.ValidationError) {
           return res.status(400).json({ errors: error.errors });
@@ -26,34 +44,23 @@ class ProductController {
   
         // Erros do Sequelize (ex: unique constraint)
         if (error.name === 'SequelizeUniqueConstraintError') {
-          return res.status(400).json({ error: 'Nome do Produto já existe' }); // Ajuste conforme necessidade
+          return res.status(400).json({ error: 'Nome do Produto já existe' });
         };
   
         console.error('Erro no servidor:', error); // Log para debug
         return res.status(500).json({ error: 'Erro interno do servidor' });
       };
 
-
-
-      // pegando o filename da imagem, mudando para variavel filePath
-       const { filename: path } = req.file;
-      // Criação do produto no banco de dados
-      const { name, price, category } = req.body;
-      
-      const product = await Product.create({
-        name,
-        price, 
-        category,
-        path
-      });
-
-      return res.status(201).json(product);
-
   };
 
   // get all products in database
   async index(req,res) {
-    const products = await Product.findAll();
+    const products = await Product.findAll({
+      include:{
+        model: Category,
+        as: 'category'
+      }
+    });
     return res.json(products);
   };
 };
