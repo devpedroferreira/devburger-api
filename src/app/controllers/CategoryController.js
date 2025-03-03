@@ -49,7 +49,7 @@ class CategoryController {
     // get all categories in database
     async index(req, res) {
         const categories = await Category.findAll();
-        return res.json(categories);
+        return res.json({ categories: categories.map(({ id, name, description }) => ({ id, name, description })) });
     };
 };
 
