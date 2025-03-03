@@ -23,7 +23,7 @@ export async function up(queryInterface, Sequelize) {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {
-            model: 'categories',
+            model: 'category',
             key: 'id'
         },
         onUpdate: 'CASCADE',

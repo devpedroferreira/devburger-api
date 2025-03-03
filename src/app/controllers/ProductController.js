@@ -13,7 +13,7 @@ class ProductController {
           category_id: Yup.number().required('Categoria é obrigatória'), 
       });
 
-       // Validação dos dados
+      // Validação dos dados
        await schema.validate(req.body, { abortEarly: false });
 
       const {name, price, category_id} = req.body;
@@ -50,16 +50,12 @@ class ProductController {
         console.error('Erro no servidor:', error); // Log para debug
         return res.status(500).json({ error: 'Erro interno do servidor' });
       };
-
   };
 
   // get all products in database
   async index(req,res) {
     const products = await Product.findAll({
-      include:{
-        model: Category,
-        as: 'category'
-      }
+      include: [{ model: Category, as: 'category' }]
     });
     return res.json(products);
   };
