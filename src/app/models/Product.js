@@ -5,24 +5,32 @@ class Product extends Model {
         super.init(
             {
                 name: {
-                type: Sequelize.STRING,
-                unique: true
+                    type: Sequelize.STRING,
+                    unique: true
                 },
-                price: Sequelize.NUMBER,
-                category: Sequelize.STRING,
-                path: Sequelize.STRING,
+                price: {
+                    type: Sequelize.DECIMAL(6, 2),
+                    allowNull:false,
+                },
+                path: {
+                    type:Sequelize.STRING,
+                    allowNull:false,
+                },
                 url: {
-                type: Sequelize.VIRTUAL,
-                
-                get(){
-                    return `http://localhost:5433/product-file/${this.path}`
-                },
+                    type: Sequelize.VIRTUAL,
+                    get(){
+                        return `http://localhost:5433/product-file/${this.path}`
+                    },
                 },
             },
             {
-            sequelize,
+                sequelize,
             },
         );
+    };
+
+    static associate(models){
+        this.belongsTo(models.Category, { foreignKey: 'category_id', as: 'category' });
     };
 };
 
