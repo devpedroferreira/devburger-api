@@ -12,7 +12,8 @@ class Category extends Model {
             description: Sequelize.STRING,   
             },
             {
-                sequelize
+                sequelize,
+                tableName:'category', // especifica o nome da tabela
             },
         );
     };
