@@ -24,10 +24,11 @@ export async function up(queryInterface, Sequelize) {
         allowNull: false,
         references: {
             model: 'category',
-            key: 'id'
+            key: 'id',
         },
         onUpdate: 'CASCADE',
-        onDelete: 'SET NULL'
+        onDelete: 'SET NULL',
+        allowNull: true,
     },
     // path da img do produto
     path: {

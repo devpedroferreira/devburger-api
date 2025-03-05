@@ -7,7 +7,7 @@ class ProductController {
       // Schema de validação
       const schema = Yup.object().shape({
         name: Yup.string().required('Nome é obrigatório'),
-        price: Yup.decimal() 
+        price: Yup.number() 
           .positive('O preço deve ser um valor positivo')
           .required('Preço é obrigatório'),
           category_id: Yup.number().required('Categoria é obrigatória'), 
@@ -16,7 +16,15 @@ class ProductController {
       // Validação dos dados
        await schema.validate(req.body, { abortEarly: false });
 
-      const {name, price, category_id} = req.body;
+      // Adicione um console.log para verificar os dados da requisição
+      //console.log('Requisição recebida:', req.body);
+      //console.log('Arquivo recebido:', req.file); 
+      
+      // Desestruturação dos dados da requisição
+      let {name, price, category_id} = req.body;
+
+      // Converta category_id para número
+      category_id = Number(category_id);
 
       // Verifica se a categoria existe
       const category = await Category.findByPk(category_id);
@@ -31,7 +39,7 @@ class ProductController {
         name,
         price,
         category_id,
-        path
+        path,
       });
 
         return res.status(201).json(product);
@@ -55,7 +63,7 @@ class ProductController {
   // get all products in database
   async index(req,res) {
     const products = await Product.findAll({
-      include: [{ model: Category, as: 'category' }]
+      include: [{ model: Category, as: 'category', attributes: ['id', 'name'] }]
     });
     return res.json(products);
   };

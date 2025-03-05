@@ -29,6 +29,9 @@ class Product extends Model {
         );
     };
 
+    return(){
+        return this.url;
+    };
     static associate(models){
         this.belongsTo(models.Category, { foreignKey: 'category_id', as: 'category' });
     };

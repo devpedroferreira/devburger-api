@@ -16,6 +16,8 @@ class Category extends Model {
                 tableName:'category', // especifica o nome da tabela
             },
         );
+
+        return this;
     };
 };
 
