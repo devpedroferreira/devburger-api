@@ -12,6 +12,10 @@ class Product extends Model {
                     type: Sequelize.DECIMAL(6, 2),
                     allowNull:false,
                 },
+                category_id: {
+                    type: Sequelize.INTEGER,
+                    allowNull: false,
+                },
                 path: {
                     type:Sequelize.STRING,
                     allowNull:false,
@@ -26,12 +30,11 @@ class Product extends Model {
             {
                 sequelize,
             },
+            
         );
+        return this;
     };
 
-    return(){
-        return this.url;
-    };
     static associate(models){
         this.belongsTo(models.Category, { foreignKey: 'category_id', as: 'category' });
     };

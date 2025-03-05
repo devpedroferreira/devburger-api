@@ -41,7 +41,7 @@ class ProductController {
         category_id,
         path,
       });
-
+        console.log('Produto criado:', product.toJSON()); // log para debug
         return res.status(201).json(product);
 
       } catch (error) {
