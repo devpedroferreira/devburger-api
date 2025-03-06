@@ -14,7 +14,7 @@ class Database {
     constructor() {
         this.init();
         this.mongo();
-    }
+    };
 
     // reutiliza a mesma conexao com o banco, optimiza o fluxo.
     init() {
@@ -30,14 +30,14 @@ class Database {
                 .forEach((model) => {
                     if (model.associate) {
                         model.associate(this.connection.models);
-                    }
+                    };
                 });
 
             console.log('PostgreSQL connection established successfully');
         } catch (error) {
             console.error('Unable to connect to PostgreSQL:', error);
-        }
-    }
+        };
+    };
 
     async mongo() {
         try {
