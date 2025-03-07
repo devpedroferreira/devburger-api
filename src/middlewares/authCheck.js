@@ -11,7 +11,7 @@ const authCheck = async (req, res, next) => {
 
     // pegando o token no header -> authorization
     // criando um array com 2 posições, separando o token do "Bearer"
-    const [, token] = authToken.split(' ')[1];// Use [1] para pegar o token após "Bearer"
+    const token = authToken.split(' ')[1];// Use [1] para pegar o token após "Bearer"
     if (!token) {
         return res.status(401).json({ error: 'Token format invalid' });
     };
