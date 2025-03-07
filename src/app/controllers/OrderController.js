@@ -5,67 +5,89 @@ import Category from '../models/Category.js';
 
 class OrderController {
     async store(req, res) {
-        const schema = Yup.object().shape({
-            products: Yup.array().required()
-            .of(
-                Yup.object().shape({
-                id: Yup.number().required(),
-                quantity: Yup.number().required().positive().integer(),
-                }),
-                ),
-            }).required();
-       
-            // validate schema
-            try {
-                schema.validateSync(req.body), { abortEarly: false };
-            } catch (error) {
-                return res.status(400).json({ error: 'Validation fails', messages: error.inner });
-            }
-            
-            // get user id and name
+        try {
+            // Validation schema
+            const schema = Yup.object().shape({
+                products: Yup.array()
+                    .of(
+                        Yup.object().shape({
+                            id: Yup.number().required(),
+                            quantity: Yup.number().required().positive().integer(),
+                        })
+                    )
+                    
+            });
+
+            // Validate request body
+            await schema.validate(req.body, { abortEarly: false });
+
+            // Get products from request body
             const { products } = req.body;
             const productsId = products.map((product) => product.id);
-            const { id, name } = req.user;
-           
-            // find products
-            const findProducts = await Product.findAll({ 
-             where: { id: productsId },
-             include: { 
-                model: Category, 
-                as: 'category', 
-                attributes: ['name'] },
+
+            // Get user from request (set by auth middleware)
+            const userId = req.userId;
+            const userName = req.userName;
+
+            // Find products in database
+            const findProducts = await Product.findAll({
+                where: { id: productsId },
+                include:[ 
+                    {
+                    model: Category,
+                    as: 'category',
+                    attributes: ['name'],
+                    },
+                ],    
             });
-            
-            // products from db
-            const formattedProducts = findProducts.map((product) => { 
-                const productIndex = products.findIndex((item) => item.id === product.id); // find product
-                
-                const newProduct ={
+
+            // Format products for order
+            const formattedProducts = findProducts.map((product) => {
+                const productIndex = products.findIndex((item) => item.id === product.id);
+
+                const newProduct = {
                     id: product.id,
                     name: product.name,
                     price: product.price,
                     category: product.category.name,
                     url: product.url,
-                    quantity: products[productIndex].quantity, // quantity from request                   
-                }
+                    quantity: products[productIndex].quantity,//quantity from request
+                };
+                console.log('Formatted product:', newProduct); // Add this debug log
                 return newProduct;
             });
-
-            // create order
+            console.log('All formatted products:', formattedProducts); // Add this debug log
+            
+            // Create order
             const order = await Order.create({
                 user: {
-                    id,
-                    name,
+                    id: userId,
+                    name: userName,
                 },
-                products: productsId,
-                status: 'PENDING',
-                timestamp: new Date(),
+                products: formattedProducts,
+                //status: 'PENDING',
+                //timestamp: new Date(),
             });
-            // return order
+            console.log('Created order:', order); // Add this debug log
             return res.status(201).json(order);
+            
 
+        } catch (error) {
+            console.error('Error creating order:', error);
+
+            if (error instanceof Yup.ValidationError) {
+                return res.status(400).json({
+                    error: 'Validation failed',
+                    messages: error.errors,
+                });
+            }
+
+            return res.status(500).json({
+                error: 'Internal server error',
+                message: error.message,
+            });
         }
-    
     }
+}
 
 export default new OrderController();
