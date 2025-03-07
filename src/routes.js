@@ -3,6 +3,7 @@ import UserController from "./app/controllers/UserController.js";
 import SessionController from "./app/controllers/SessionController.js";
 import ProductController from "./app/controllers/ProductController.js";
 import CategoryController from "./app/controllers/CategoryController.js";
+import OrderController from "./app/controllers/OrderController.js";
 
 // Multer
 import multer from "multer";
@@ -28,5 +29,8 @@ router.get('/products', authCheck , ProductController.index);
 router.post('/categories', CategoryController.store);
 //listar categorias
 router.get('/categories', CategoryController.index);
-// exportando as rotas
+
+//rota order
+router.post('/orders', OrderController.store);
+
 export default router;
