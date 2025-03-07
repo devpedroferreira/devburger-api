@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken';
 import authConfig from '../config/authKey.js'
 
-const authCheck = (req, res, next) => {
+const authCheck = async (req, res, next) => {
     
     //validando se o token esta vindo no header
     const authToken = req.headers.authorization;
@@ -10,17 +10,23 @@ const authCheck = (req, res, next) => {
     };
 
     // pegando o token no header -> authorization
-    const token = authToken.split(' ')[1];// Use [1] para pegar o token após "Bearer"
+    // criando um array com 2 posições, separando o token do "Bearer"
+    const [, token] = authToken.split(' ')[1];// Use [1] para pegar o token após "Bearer"
+    if (!token) {
+        return res.status(401).json({ error: 'Token format invalid' });
+    };
 
+    try{
+        //verificando se o token é valido
+        const decoded = jwt.verify(token, authConfig.secret);
+        
+        req.userId = decoded.id; //passando o id do usuario para o req
+        req.userName = decoded.name; //passando o nome do usuario para o req
 
-    //validando integridade do token
-        jwt.verify(token, authConfig.secret, (err, decoded) => {
-        if (err) {
-            return res.status(401).json({ error: 'Invalid token' });
-        }
-        console.log(decoded)
-        req.user = decoded;// Adiciona o usuário decodificado à requisição
-        return next(); // continue flux to controller
-     });
+        return next();
+    }catch(error){
+        return res.status(401).json({ error: 'Token invalid', details: error });
+    };
 };
+
 export default authCheck;

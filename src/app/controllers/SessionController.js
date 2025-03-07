@@ -42,7 +42,7 @@ class SessionController {
             name: user.name,
             email: user.email,
             admin: user.admin,
-            token: jwt.sign({id : user.id }, authConfig.secret, {
+            token: jwt.sign({id : user.id, name: user.name }, authConfig.secret, {
                 expiresIn: authConfig.expiresIn
             })
         });
@@ -50,7 +50,6 @@ class SessionController {
         } catch (error) {
             return res.status(500).json({ error: 'Erro interno no servidor' });
         };
-
     };
 };
 
