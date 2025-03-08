@@ -1,60 +1,81 @@
 import * as Yup from 'yup';
-import Category from '../models/Category.js'; // Importe o modelo Category
+import Category from '../models/Category.js';
+
 class CategoryController {
     async store(req, res) {
         try {
-            // Schema de validação
+            // Validate admin access first
+            if (!req.isAdmin) {
+                return res.status(401).json({ error: 'Unauthorized - Admin access required' });
+            }
+
+            // Validation schema
             const schema = Yup.object().shape({
-                name: Yup.string().required('Nome é obrigatório'),
-                description: Yup.string().required('Descrição é obrigatória'),
+                name: Yup.string()
+                    .required('Name is required')
+                    .min(3, 'Name must be at least 3 characters'),
+                description: Yup.string()
+                    .required('Description is required')
+                    .min(5, 'Description must be at least 5 characters'),
             });
 
-            // Validação dos dados
+            // Validate request data
             await schema.validate(req.body, { abortEarly: false });
-
-            // Validando se o usuário é administrador
-            if (!req.isAdmin) {
-                return res.status(401).json({ error: 'Acesso negado' });
-            };
 
             const { name, description } = req.body;
 
-            // Verificar se a categoria já existe
-            const categoryExists = await Category.findOne({ where: { name } });
-            if (categoryExists) {
-                return res.status(400).json({ error: 'Nome da Categoria já existe' });
-            };
+            // Check if category already exists
+            const categoryExists = await Category.findOne({ 
+                where: { name: name.toLowerCase() } 
+            });
 
-            // Criação da categoria no banco de dados
+            if (categoryExists) {
+                return res.status(400).json({ error: 'Category already exists' });
+            }
+
+            // Create category
             const category = await Category.create({
-                name,
+                name: name.toLowerCase(),
                 description
             });
 
-            const { id } = category;
-            return res.status(201).json({ id, name, description });
+            return res.status(201).json({
+                id: category.id,
+                name: category.name,
+                description: category.description
+            });
 
         } catch (error) {
-            // Tratamento de erros
+            console.error('Error creating category:', error);
+
             if (error instanceof Yup.ValidationError) {
-                return res.status(400).json({ errors: error.errors });
-            };
+                return res.status(400).json({
+                    error: 'Validation failed',
+                    messages: error.errors,
+                });
+            }
 
-            // Erros do Sequelize (ex: unique constraint)
             if (error.name === 'SequelizeUniqueConstraintError') {
-                return res.status(400).json({ error: 'Nome da Categoria já existe' }); // Ajuste conforme necessidade
-            };
+                return res.status(400).json({ error: 'Category name already exists' });
+            }
 
-            console.error('Erro no servidor:', error); // Log para debug
-            return res.status(500).json({ error: 'Erro interno do servidor' });
-        };
-    };
+            return res.status(500).json({ error: 'Internal server error' });
+        }
+    }
 
-    // get all categories in database
     async index(req, res) {
-        const categories = await Category.findAll();
-        return res.json({ categories: categories.map(({ id, name, description }) => ({ id, name, description })) });
-    };
-};
+        try {
+            const categories = await Category.findAll({
+                attributes: ['id', 'name', 'description'],
+                order: [['name', 'ASC']]
+            });
 
-export default new CategoryController(); // Exporte uma instância do controller
+            return res.json({ categories });
+        } catch (error) {
+            console.error('Error listing categories:', error);
+            return res.status(500).json({ error: 'Internal server error' });
+        }
+    }
+}
+
+export default new CategoryController();

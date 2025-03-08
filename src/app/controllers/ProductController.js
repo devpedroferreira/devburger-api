@@ -57,7 +57,7 @@ class ProductController {
           },
         ],
       });
-
+      
       return res.status(201).json(productWithCategory);
     } catch (error) {
       console.error('Error creating product:', error);
@@ -68,7 +68,7 @@ class ProductController {
           messages: error.errors,
         });
       }
-
+      // Check if product name already exists
       if (error.name === 'SequelizeUniqueConstraintError') {
         return res.status(400).json({ error: 'Product name already exists' });
       }
@@ -77,6 +77,7 @@ class ProductController {
     }
   }
 
+  // List all products
   async index(req, res) {
     try {
       const products = await Product.findAll({
