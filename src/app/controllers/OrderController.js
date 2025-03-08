@@ -2,6 +2,7 @@ import * as Yup from 'yup';
 import Order from '../schemas/Order.js';
 import Product from '../models/Product.js';
 import Category from '../models/Category.js';
+
 /**
  * Controller responsible for handling order operations
  */
@@ -13,7 +14,6 @@ class OrderController {
      */
     async store(req, res) {
         try {
-            // Define validation schema for order creation
             const schema = Yup.object().shape({
                 products: Yup.array()
                     .of(
@@ -25,18 +25,16 @@ class OrderController {
                     .required(),
             });
 
-            // Validate request body against schema
+            // Validate request body
             await schema.validate(req.body, { abortEarly: false });
 
-            // Extract product information from request
+            // Extract data from request body
             const { products } = req.body;
             const productsId = products.map((product) => product.id);
-
-            // Get authenticated user information
             const userId = req.userId;
             const userName = req.userName;
 
-            // Fetch products with their categories from database
+            // Find all products in the database
             const findProducts = await Product.findAll({
                 where: { id: productsId },
                 include: [
@@ -48,12 +46,12 @@ class OrderController {
                 ],
             });
 
-            // Validate if products were found
+            // Check if all products were found
             if (!findProducts.length) {
                 return res.status(404).json({ error: 'No products found' });
             }
 
-            // Format products for order creation
+            // Check if all products are available
             const formattedProducts = findProducts.map((product) => {
                 const productIndex = products.findIndex((item) => item.id === product.id);
                 return {
@@ -66,7 +64,7 @@ class OrderController {
                 };
             });
 
-            // Create new order in database
+            // Create order
             const order = await Order.create({
                 user: { id: userId, name: userName },
                 products: formattedProducts,
@@ -74,12 +72,10 @@ class OrderController {
                 timestamp: new Date()
             });
 
-            // Return created order
             return res.status(201).json(order);
         } catch (error) {
             console.error('Error creating order:', error);
 
-            // Handle validation errors
             if (error instanceof Yup.ValidationError) {
                 return res.status(400).json({
                     error: 'Validation failed',
@@ -87,7 +83,6 @@ class OrderController {
                 });
             }
 
-            // Handle general errors
             return res.status(500).json({
                 error: 'Internal server error',
                 message: error.message,
@@ -95,9 +90,18 @@ class OrderController {
         }
     }
 
+    // List orders
     async index(req, res) {
         try {
-            // Fetch all orders sorted by creation date
+            // List orders for regular users
+            if (!req.isAdmin) {
+                const orders = await Order.find({ 
+                    'user.id': req.userId 
+                }).sort({ createdAt: 'desc' });
+                return res.json(orders);
+            }
+
+            // List all orders for admin users
             const orders = await Order.find().sort({ createdAt: 'desc' });
             return res.json(orders);
         } catch (error) {
@@ -109,46 +113,53 @@ class OrderController {
         }
     }
 
+    // Update order status
     async updateStatus(req, res) {
         try {
-            // Define validation schema for status update
+            // Check if user is an admin
+            if (!req.isAdmin) {
+                return res.status(401).json({ 
+                    error: 'Unauthorized - Admin access required' 
+                });
+            }
+            // Validate request body
             const schema = Yup.object().shape({
                 status: Yup.string()
-                    .required()
-                    .oneOf(['Pedido Realizado', 'Em Preparação', 'Finalizado']),
+                    .required('Status is required')
+                    .oneOf(
+                        ['Pedido Realizado', 'Em Preparação', 'Finalizado'],
+                        'Invalid status value'
+                    ),
             });
 
             const { id } = req.params;
             const { status } = req.body;
 
-            // validate if user is admin
-            if (!req.isAdmin) {
-                return res.status(401).json({ error: 'Unauthorized' });
-            }
+            // Validate request body
+            await schema.validate({ status }, { abortEarly: false });
 
-            // Validate status value
-            try {
-                await schema.validate({ status });
-            } catch (err) {
-                return res.status(400).json({ error: err.message });
-            }
-
-            // Find and update order status
+            // Update order status
             const order = await Order.findByIdAndUpdate(
                 id,
                 { status },
-                { new: true } // Returns the updated document
+                { new: true }
             );
 
-            // Check if order exists
             if (!order) {
                 return res.status(404).json({ error: 'Order not found' });
             }
 
-            // Return updated order
             return res.json(order);
         } catch (error) {
             console.error('Error updating order status:', error);
+            // Check if error is a Yup validation error
+            if (error instanceof Yup.ValidationError) {
+                return res.status(400).json({
+                    error: 'Validation failed',
+                    messages: error.errors,
+                });
+            }
+
             return res.status(500).json({
                 error: 'Internal server error',
                 message: error.message,

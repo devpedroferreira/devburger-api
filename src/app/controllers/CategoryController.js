@@ -47,7 +47,7 @@ class CategoryController {
 
         } catch (error) {
             console.error('Error creating category:', error);
-
+            // Check if error is from validation
             if (error instanceof Yup.ValidationError) {
                 return res.status(400).json({
                     error: 'Validation failed',
@@ -62,14 +62,14 @@ class CategoryController {
             return res.status(500).json({ error: 'Internal server error' });
         }
     }
-
+    // List all categories
     async index(req, res) {
         try {
             const categories = await Category.findAll({
                 attributes: ['id', 'name', 'description'],
                 order: [['name', 'ASC']]
             });
-
+            // Return categories
             return res.json({ categories });
         } catch (error) {
             console.error('Error listing categories:', error);
