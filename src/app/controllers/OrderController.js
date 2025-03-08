@@ -127,9 +127,7 @@ class OrderController {
                 status: Yup.string()
                     .required('Status is required')
                     .oneOf(
-                        ['Pedido Realizado', 'Em Preparação', 'Finalizado'],
-                        'Invalid status value'
-                    ),
+                        ['Pedido Realizado', 'Em Preparação', 'Finalizado','Saiu para Entrega','Cancelado'])
             });
 
             const { id } = req.params;
