@@ -8,29 +8,30 @@ import OrderController from "./app/controllers/OrderController.js";
 // Multer
 import multer from "multer";
 import multerConfig from './config/multer.js';
-const upload = multer(multerConfig);// conf multer
+const upload = multer(multerConfig);
 
 // validate token to login
 import authCheck from "./middlewares/authCheck.js";
 
 const router = Router();
-// rota post create user
+
+// Public routes
 router.post('/users', UserController.store);
-// session login user
 router.post('/session', SessionController.store);
 
-router.use(authCheck); // rotas abaixo seram autenticadas
-// Product
-router.post('/products', upload.single('file'), ProductController.store);
-// listar os produtos
-router.get('/products', authCheck , ProductController.index);
+// Authentication middleware
+router.use(authCheck); // All routes below require authentication
 
-// Category
+// Products routes
+router.post('/products', upload.single('file'), ProductController.store);
+router.get('/products', ProductController.index);
+
+// Categories routes
 router.post('/categories', CategoryController.store);
-//listar categorias
 router.get('/categories', CategoryController.index);
 
-//rota order
+// Orders routes
 router.post('/orders', OrderController.store);
+router.get('/orders', OrderController.index);
 
 export default router;

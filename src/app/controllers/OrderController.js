@@ -14,8 +14,7 @@ class OrderController {
                             id: Yup.number().required(),
                             quantity: Yup.number().required().positive().integer(),
                         })
-                    )
-                    
+                    ).required(),
             });
 
             // Validate request body
@@ -32,13 +31,13 @@ class OrderController {
             // Find products in database
             const findProducts = await Product.findAll({
                 where: { id: productsId },
-                include:[ 
+                include: [
                     {
-                    model: Category,
-                    as: 'category',
-                    attributes: ['name'],
+                        model: Category,
+                        as: 'category',
+                        attributes: ['name'],
                     },
-                ],    
+                ],
             });
 
             // Format products for order
@@ -51,13 +50,11 @@ class OrderController {
                     price: product.price,
                     category: product.category.name,
                     url: product.url,
-                    quantity: products[productIndex].quantity,//quantity from request
+                    quantity: products[productIndex].quantity,
                 };
-                console.log('Formatted product:', newProduct); // Add this debug log
                 return newProduct;
             });
-            console.log('All formatted products:', formattedProducts); // Add this debug log
-            
+
             // Create order
             const order = await Order.create({
                 user: {
@@ -65,13 +62,11 @@ class OrderController {
                     name: userName,
                 },
                 products: formattedProducts,
-                //status: 'PENDING',
-                //timestamp: new Date(),
+                status: 'Pedido Realizado',
+                timestamp: new Date()
             });
-            console.log('Created order:', order); // Add this debug log
-            return res.status(201).json(order);
-            
 
+            return res.status(201).json(order);
         } catch (error) {
             console.error('Error creating order:', error);
 
@@ -82,6 +77,20 @@ class OrderController {
                 });
             }
 
+            return res.status(500).json({
+                error: 'Internal server error',
+                message: error.message,
+            });
+        }
+    }
+
+    // List all orders
+    async index(req, res) {
+        try {
+            const orders = await Order.find().sort({ createdAt: 'desc' });
+            return res.json(orders);
+        } catch (error) {
+            console.error('Error listing orders:', error);
             return res.status(500).json({
                 error: 'Internal server error',
                 message: error.message,

@@ -42,11 +42,12 @@ const OrderSchema = new mongoose.Schema({
 
     status:{
     type: String,
-    required: false
+    required: true,
     },
 
     timestamp:{
         type: Date,
+        required: true,
         default: Date.now
     },
 
