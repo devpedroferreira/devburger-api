@@ -1,77 +1,101 @@
 import * as Yup from 'yup';
-import Product from '../models/Product.js'; // Importe o modelo Product
-import Category from '../models/Category.js'; // Importe o modelo Category
+import Product from '../models/Product.js';
+import Category from '../models/Category.js';
+
 class ProductController {
   async store(req, res) {
     try {
-      // Schema de validação
+      // Validate admin access first
+      if (!req.isAdmin) {
+        return res.status(401).json({ error: 'Unauthorized - Admin access required' });
+      }
+
+      // Validation schema
       const schema = Yup.object().shape({
-        name: Yup.string().required('Nome é obrigatório'),
-        price: Yup.number() 
-          .positive('O preço deve ser um valor positivo')
-          .required('Preço é obrigatório'),
-          category_id: Yup.number().required('Categoria é obrigatória'), 
+        name: Yup.string().required('Name is required'),
+        price: Yup.number()
+          .positive('Price must be a positive value')
+          .required('Price is required'),
+        category_id: Yup.number().required('Category is required'),
       });
 
-      // Validação dos dados
-       await schema.validate(req.body, { abortEarly: false });
+      // Validate request data
+      await schema.validate(req.body, { abortEarly: false });
 
-      //validar se o usuario é admin
-      if (!req.isAdmin) {
-        return res.status(401).json({ error: 'Acesso negado' });
-      }; 
+      // Check if image file was uploaded
+      if (!req.file) {
+        return res.status(400).json({ error: 'Product image is required' });
+      }
 
-      // Adicione um console.log para verificar os dados da requisição
-      //console.log('Requisição recebida:', req.body);
-      //console.log('Arquivo recebido:', req.file); 
-      
-      // Desestruturação dos dados da requisição
-      let {name, price, category_id} = req.body;
+      // Extract request data
+      const { name, price, category_id } = req.body;
 
-      // Converta category_id para número
-      category_id = Number(category_id);
-
-      // Verifica se a categoria existe
-      const category = await Category.findByPk(category_id);
+      // Check if category exists
+      const category = await Category.findByPk(Number(category_id));
       if (!category) {
-        return res.status(400).json({ error: 'Categoria não encontrada' });
-      };
+        return res.status(404).json({ error: 'Category not found' });
+      }
 
-      // get the filename of the image, changing to filePath variable
+      // Get uploaded file path
       const { filename: path } = req.file;
-      // Create product in database
+
+      // Create product
       const product = await Product.create({
         name,
-        price,
-        category_id,
+        price: Number(price),
+        category_id: Number(category_id),
         path,
       });
-        console.log('Produto criado:', product.toJSON()); // log para debug
-        return res.status(201).json(product);
 
-      } catch (error) {
-        // Tratamento de erros
-        if (error instanceof Yup.ValidationError) {
-          return res.status(400).json({ errors: error.errors });
-        };
-  
-        // Erros do Sequelize (ex: unique constraint)
-        if (error.name === 'SequelizeUniqueConstraintError') {
-          return res.status(400).json({ error: 'Nome do Produto já existe' });
-        };
-  
-        console.error('Erro no servidor:', error); // Log para debug
-        return res.status(500).json({ error: 'Erro interno do servidor' });
-      };
-  };
+      // Return created product with category information
+      const productWithCategory = await Product.findByPk(product.id, {
+        include: [
+          {
+            model: Category,
+            as: 'category',
+            attributes: ['id', 'name'],
+          },
+        ],
+      });
 
-  // get all products in database
-  async index(req,res) {
-    const products = await Product.findAll({
-      include: [{ model: Category, as: 'category', attributes: ['id', 'name'] }]
-    });
-    return res.json(products);
-  };
-};
+      return res.status(201).json(productWithCategory);
+    } catch (error) {
+      console.error('Error creating product:', error);
+
+      if (error instanceof Yup.ValidationError) {
+        return res.status(400).json({
+          error: 'Validation failed',
+          messages: error.errors,
+        });
+      }
+
+      if (error.name === 'SequelizeUniqueConstraintError') {
+        return res.status(400).json({ error: 'Product name already exists' });
+      }
+
+      return res.status(500).json({ error: 'Internal server error' });
+    }
+  }
+
+  async index(req, res) {
+    try {
+      const products = await Product.findAll({
+        include: [
+          {
+            model: Category,
+            as: 'category',
+            attributes: ['id', 'name'],
+          },
+        ],
+        order: [['created_at', 'DESC']],
+      });
+
+      return res.json(products);
+    } catch (error) {
+      console.error('Error listing products:', error);
+      return res.status(500).json({ error: 'Internal server error' });
+    }
+  }
+}
 
 export default new ProductController();
