@@ -1,6 +1,5 @@
 import * as Yup from 'yup';
 import Category from '../models/Category.js'; // Importe o modelo Category
-
 class CategoryController {
     async store(req, res) {
         try {
@@ -12,6 +11,11 @@ class CategoryController {
 
             // Validação dos dados
             await schema.validate(req.body, { abortEarly: false });
+
+            // Validando se o usuário é administrador
+            if (!req.isAdmin) {
+                return res.status(401).json({ error: 'Acesso negado' });
+            };
 
             const { name, description } = req.body;
 

@@ -16,6 +16,11 @@ class ProductController {
       // Validação dos dados
        await schema.validate(req.body, { abortEarly: false });
 
+      //validar se o usuario é admin
+      if (!req.isAdmin) {
+        return res.status(401).json({ error: 'Acesso negado' });
+      }; 
+
       // Adicione um console.log para verificar os dados da requisição
       //console.log('Requisição recebida:', req.body);
       //console.log('Arquivo recebido:', req.file); 

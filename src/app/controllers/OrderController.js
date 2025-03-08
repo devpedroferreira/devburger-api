@@ -2,7 +2,6 @@ import * as Yup from 'yup';
 import Order from '../schemas/Order.js';
 import Product from '../models/Product.js';
 import Category from '../models/Category.js';
-
 /**
  * Controller responsible for handling order operations
  */
@@ -121,6 +120,11 @@ class OrderController {
 
             const { id } = req.params;
             const { status } = req.body;
+
+            // validate if user is admin
+            if (!req.isAdmin) {
+                return res.status(401).json({ error: 'Unauthorized' });
+            }
 
             // Validate status value
             try {
