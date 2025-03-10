@@ -16,6 +16,10 @@ class Product extends Model {
                     type: Sequelize.INTEGER,
                     allowNull: false,
                 },
+                offer: {
+                    type: Sequelize.BOOLEAN,
+                    defaultValue: false,
+                },
                 path: {
                     type:Sequelize.STRING,
                     allowNull:false,
