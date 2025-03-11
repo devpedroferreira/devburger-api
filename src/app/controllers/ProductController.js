@@ -115,6 +115,7 @@ class ProductController {
         ],
         order: [['created_at', 'DESC']],
       });
+      return res.json(products); // return products
     }
     catch (error) {
       console.error('Error listing products by category:', error);
