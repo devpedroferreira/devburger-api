@@ -33,16 +33,21 @@ class CategoryController {
                 return res.status(400).json({ error: 'Category already exists' });
             }
 
-            // Create category
+            // Get uploaded file path if exists
+            const path = req.file ? req.file.filename : null;
+
+            // Create category with image
             const category = await Category.create({
                 name: name.toLowerCase(),
-                description
+                description,
+                path
             });
 
             return res.status(201).json({
                 id: category.id,
                 name: category.name,
-                description: category.description
+                description: category.description,
+                url: category.url
             });
 
         } catch (error) {
@@ -62,11 +67,12 @@ class CategoryController {
             return res.status(500).json({ error: 'Internal server error' });
         }
     }
+
     // List all categories
     async index(req, res) {
         try {
             const categories = await Category.findAll({
-                attributes: ['id', 'name', 'description'],
+                attributes: ['id', 'name', 'description', 'path', 'url'],
                 order: [['name', 'ASC']]
             });
             // Return categories
