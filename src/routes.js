@@ -30,8 +30,11 @@ router.patch('/products/:id/offer', ProductController.updateOffer); // update of
 router.get('/products/:category_id', ProductController.show); // list to category
 
 // Categories routes
-router.post('/categories', upload.single('file'), CategoryController.store);
 router.get('/categories', CategoryController.index);
+router.get('/categories/:id', CategoryController.show);
+router.post('/categories', upload.single('file'), CategoryController.store);
+router.put('/categories/:id', upload.single('file'), CategoryController.update);
+router.delete('/categories/:id', CategoryController.delete);
 
 // Orders routes
 router.post('/orders', OrderController.store);
