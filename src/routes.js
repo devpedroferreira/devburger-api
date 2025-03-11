@@ -24,7 +24,8 @@ router.use(authCheck); // All routes below require authentication
 
 // Products routes
 router.post('/products', upload.single('file'), ProductController.store);
-router.get('/products', ProductController.index);
+router.put('/products/:id', upload.single('file'), ProductController.update);// update
+router.get('/products', ProductController.index); // list all
 router.patch('/products/:id/offer', ProductController.updateOffer); // update offer
 router.get('/products/:category_id', ProductController.show); // list to category
 

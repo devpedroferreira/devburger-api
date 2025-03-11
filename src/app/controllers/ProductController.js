@@ -122,7 +122,90 @@ class ProductController {
       return res.status(500).json({ error: 'Internal server error' });
     }
   }
+
   // update de produto
+  async update(req, res) {
+    try {
+        // Validate admin access first
+        if (!req.isAdmin) {
+            return res.status(401).json({ error: 'Unauthorized - Admin access required' });
+        }
+
+        // Validation schema for update
+        const schema = Yup.object().shape({
+            name: Yup.string().required('Name is required'),
+            price: Yup.number()
+                .positive('Price must be a positive value')
+                .required('Price is required'),
+            category_id: Yup.number().required('Category is required'),
+            offer: Yup.boolean()
+        });
+
+        // Validate request data
+        await schema.validate(req.body, { abortEarly: false });
+
+        // Get product ID from params
+        const { id } = req.params;
+
+        // Extract updated fields from request body
+        const { name, price, category_id, offer } = req.body;
+
+        // Find product by ID
+        const product = await Product.findByPk(id);
+        if (!product) {
+            return res.status(404).json({ error: 'Product not found' });
+        }
+
+        // Validate if new category exists
+        const category = await Category.findByPk(Number(category_id));
+        if (!category) {
+            return res.status(404).json({ error: 'Category not found' });
+        }
+
+        // Handle file update if present
+        let path = product.path;
+        if (req.file) {
+            path = req.file.filename;
+        }
+
+        // Update product with new values
+        await product.update({
+            name,
+            price: Number(price),
+            category_id: Number(category_id),
+            path,
+            offer: offer !== undefined ? offer : product.offer
+        });
+
+        // Return updated product with category information
+        const updatedProduct = await Product.findByPk(id, {
+            include: [
+                {
+                    model: Category,
+                    as: 'category',
+                    attributes: ['id', 'name'],
+                },
+            ],
+        });
+
+        return res.json(updatedProduct);
+    } catch (error) {
+        console.error('Error updating product:', error);
+
+        if (error instanceof Yup.ValidationError) {
+            return res.status(400).json({
+                error: 'Validation failed',
+                messages: error.errors,
+            });
+        }
+
+        if (error.name === 'SequelizeUniqueConstraintError') {
+            return res.status(400).json({ error: 'Product name already exists' });
+        }
+
+        return res.status(500).json({ error: 'Internal server error' });
+    }
+};
 
   //update offer
   async updateOffer(req, res) {
