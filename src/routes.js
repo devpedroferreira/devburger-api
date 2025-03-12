@@ -28,6 +28,7 @@ router.put('/products/:id', upload.single('file'), ProductController.update);// 
 router.get('/products', ProductController.index); // list all
 router.patch('/products/:id/offer', ProductController.updateOffer); // update offer
 router.get('/products/:category_id', ProductController.show); // list to category
+// falta delete 
 
 // Categories routes
 router.get('/categories', CategoryController.index);

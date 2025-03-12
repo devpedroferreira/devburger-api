@@ -1,9 +1,6 @@
 import Sequelize from 'sequelize';
 import mongoose from 'mongoose';
-
-// conf do banco
 import configDatabase from '../config/database.js';
-
 import User from '../app/models/User.js';
 import Product from '../app/models/Product.js';
 import Category from '../app/models/Category.js';
@@ -14,39 +11,44 @@ class Database {
     constructor() {
         this.init();
         this.mongo();
-    };
+    }
 
-    // reutiliza a mesma conexao com o banco, optimiza o fluxo.
-    init() {
+    async init() {
         try {
+            // Create connection
             this.connection = new Sequelize(configDatabase);
             
-            // Inicializa os modelos
-            models
-                .forEach((model) => model.init(this.connection));
-            
-            // Executa as associações dos modelos
-            models
-                .forEach((model) => {
-                    if (model.associate) {
-                        model.associate(this.connection.models);
-                    };
-                });
-
+            // Test connection
+            await this.connection.authenticate();
             console.log('PostgreSQL connection established successfully');
+            
+            // Initialize models
+            models.forEach((model) => model.init(this.connection));
+            
+            // Execute model associations
+            models.forEach((model) => {
+                if (model.associate) {
+                    model.associate(this.connection.models);
+                }
+            });
+
         } catch (error) {
-            console.error('Unable to connect to PostgreSQL:', error);
-        };
-    };
+            console.error('Unable to connect to PostgreSQL:', error.message);
+            process.exit(1); // Exit if database connection fails
+        }
+    }
 
     async mongo() {
         try {
-            this.mongoConnection = await mongoose.connect('mongodb://localhost:27017/devburger');
+            this.mongoConnection = await mongoose.connect('mongodb://localhost:27017/devburger', {
+                serverSelectionTimeoutMS: 5000 // 5 second timeout
+            });
             console.log('MongoDB connection established successfully');
         } catch (error) {
-            console.error('Unable to connect to MongoDB:', error);
-        };
-    };
-};
+            console.error('Unable to connect to MongoDB:', error.message);
+            // Don't exit process as MongoDB is optional
+        }
+    }
+}
 
 export default new Database();
