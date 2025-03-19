@@ -1,3 +1,4 @@
 node_modules
 # Keep environment variables out of version control
 .env
+# rollback 03-03-25 update about me portifolio devpedroferreira

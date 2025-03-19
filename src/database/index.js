@@ -33,7 +33,7 @@ class Database {
             });
 
         } catch (error) {
-            console.error('Unable to connect to PostgreSQL:', error.message);
+            console.error('Sem conexão com PostgreSQL:', error.message);
             process.exit(1); // Exit if database connection fails
         }
     }
@@ -45,7 +45,7 @@ class Database {
             });
             console.log('MongoDB connection established successfully');
         } catch (error) {
-            console.error('Unable to connect to MongoDB:', error.message);
+            console.error('Sem conexão com MongoDB:', error.message);
             // Don't exit process as MongoDB is optional
         }
     }
