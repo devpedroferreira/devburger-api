@@ -1,12 +1,17 @@
 import express from 'express';
 import routes from './routes.js'; // Importe suas rotas aqui
-import './database/index.js';
-
+import './database/index.js'; // connect with databases
+import cors from 'cors';
 import {resolve} from 'node:path';
 
 class App {
     constructor() {
         this.app = express(); // Cria a instância do Express
+        this.app.use(cors({
+            origin: 'http://localhost:5173', // URL do seu frontend
+            methods: ['GET', 'POST', 'PUT', 'DELETE'],
+            allowedHeaders: ['Content-Type', 'Authorization']
+        }));
         this.middlewares(); // Configura os middlewares
         this.routes(); // Configura as rotas
     };
