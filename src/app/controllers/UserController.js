@@ -20,7 +20,7 @@ class UserController {
             const schema = Yup.object().shape({
                 name: Yup.string().matches(/^[A-Za-zÀ-ÖØ-öø-ÿ\s]+$/, 'O nome deve conter somente letras.').required('Digite o nome valido, somente letras.'),
                 email: Yup.string().email('Digite um email valido, exemplo@email.com ').required('Email é obrigatório'),
-                password_hash: Yup.string().min(6, 'A senha deve ter no minímo 6 character.').required('Senha é obrigatório.'),
+                password_hash: Yup.string().min(4, 'A senha deve ter no minímo 4 character.').required('Senha é obrigatório.'),
                 admin: Yup.boolean()
             });
 
