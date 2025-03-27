@@ -9,8 +9,8 @@ import authConfig from '../../config/authKey.js'
 class SessionController {
     async store(req, res){
         const schema = Yup.object().shape({
-            email: Yup.string().email('Digite um email valido, exemplo@email.com ').required('Email é obrigatório'),
-            password: Yup.string().min(6,'A senha deve conter no minímo 6 character.').required('Senha é obrigatório'),
+            email: Yup.string().email('exemplo@email.com').required('Email é obrigatório'),
+            password: Yup.string().min(4,'A senha deve conter no minímo 4 character.').required('Senha é obrigatório'),
         });
 
         // validated if email and pass are in the correct format.
