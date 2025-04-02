@@ -10,7 +10,7 @@ class SessionController {
     async store(req, res){
         const schema = Yup.object().shape({
             email: Yup.string().email('exemplo@email.com').required('Email é obrigatório'),
-            password: Yup.string().min(4,'A senha deve conter no minímo 4 character.').required('Senha é obrigatório'),
+            password: Yup.string().min(4,'Minímo 4 character.').required('Senha é obrigatório'),
         });
 
         // validated if email and pass are in the correct format.
