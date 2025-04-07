@@ -6,11 +6,12 @@ class Product extends Model {
             {
                 name: {
                     type: Sequelize.STRING,
-                    unique: true
+                    unique: true,
+                    allowNull: false
                 },
                 price: {
                     type: Sequelize.DECIMAL(6, 2),
-                    allowNull:false,
+                    allowNull: false,
                 },
                 category_id: {
                     type: Sequelize.INTEGER,
@@ -21,27 +22,45 @@ class Product extends Model {
                     defaultValue: false,
                 },
                 path: {
-                    type:Sequelize.STRING,
-                    allowNull:false,
+                    type: Sequelize.STRING,
+                    allowNull: false,
+                    get() {
+                        // Return only the filename if path exists
+                        return this.getDataValue('path');
+                    },
+                    set(value) {
+                        // Store only the filename, not the full path
+                        this.setDataValue('path', value);
+                    }
                 },
                 url: {
                     type: Sequelize.VIRTUAL,
-                    get(){
-                        return `http://localhost:5433/product-file/${this.path}`
+                    get() {
+                        return this.path
+                            ? `http://localhost:5433/products-file/${this.path}`
+                            : null;
                     },
                 },
+                fullPath: {
+                    type: Sequelize.VIRTUAL,
+                    get() {
+                        return this.path
+                            ? `uploads/products/${this.path}`
+                            : null;
+                    },
+                }
             },
             {
                 sequelize,
-            },
-            
+                tableName: 'products'
+            }
         );
         return this;
-    };
+    }
 
     static associate(models){
         this.belongsTo(models.Category, { foreignKey: 'category_id', as: 'category' });
-    };
-};
+    }
+}
 
 export default Product;

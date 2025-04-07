@@ -1,19 +1,51 @@
 import multer from 'multer';
-import { v4 as uuidv4 } from 'uuid';
-import { extname, resolve } from 'path';
-import { fileURLToPath } from 'url';
-import { dirname } from 'path';
+import { v4 } from 'uuid';
+import { resolve, extname } from 'path';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+const fileFilter = (req, file, callback) => {
+    // Allowed image formats
+    const allowedMimes = [
+        'image/jpg',
+        'image/png'
+    ];
 
-// fotos para pasta upload
-export default {
-    storage: multer.diskStorage({
-        destination: resolve(__dirname, '..', '..', 'uploads'),
-        filename: (request, file, callback) => {
-            return callback(null, uuidv4() + extname(file.originalname));
-        }
-    })
+    if (allowedMimes.includes(file.mimetype)) {
+        callback(null, true);
+    } else {
+        callback(new Error('Formato inválido. Apenas JPG e PNG são permitidos.'));
+    }
 };
 
+const uploadConfig = {
+    // Configuração para categorias
+    categories: {
+        storage: multer.diskStorage({
+            destination: resolve('uploads', 'categories'),
+            filename: (req, file, callback) => {
+                const filename = `${v4()}${extname(file.originalname)}`;
+                return callback(null, filename);
+            },
+        }),
+        fileFilter,
+        limits: {
+            fileSize: 40 * 1024 * 1024 // 40MB para imagens 4K não comprimidas
+        }
+    },
+    
+    // Configuração para produtos
+    products: {
+        storage: multer.diskStorage({
+            destination: resolve('uploads', 'products'),
+            filename: (req, file, callback) => {
+                const filename = `${v4()}${extname(file.originalname)}`;
+                return callback(null, filename);
+            },
+        }),
+        fileFilter,
+        limits: {
+            fileSize: 40 * 1024 * 1024 // 40MB para imagens 4K não comprimidas
+        }
+    },
+};
+
+export default uploadConfig;

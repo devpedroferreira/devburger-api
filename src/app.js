@@ -19,16 +19,23 @@ class App {
     middlewares() {
         this.app.use(express.json()); // Middleware para parsear JSON
         
-        // Debug middleware para logging de requisições de arquivos
-        this.app.use('/category-file', (req, res, next) => {
+        // Debug middleware para logging de requisições de arquivos de categorias
+        this.app.use('/categories-file', (req, res, next) => {
             console.log('Accessing category file:', req.url);
-            console.log('Full path:', resolve('uploads', req.url));
+            console.log('Full path:', resolve('uploads', 'categories', req.url));
+            next();
+        });
+
+        // Debug middleware para logging de requisições de arquivos de produtos
+        this.app.use('/products-file', (req, res, next) => {
+            console.log('Accessing product file:', req.url);
+            console.log('Full path:', resolve('uploads', 'products', req.url));
             next();
         });
 
         // Configuração para servir arquivos estáticos
-        this.app.use('/category-file', express.static(resolve('uploads')));
-        this.app.use('/product-file', express.static(resolve('uploads')));
+        this.app.use('/categories-file', express.static(resolve('uploads', 'categories')));
+        this.app.use('/products-file', express.static(resolve('uploads', 'products')));
 
         // Middleware de erro para arquivos não encontrados
         this.app.use((err, req, res, next) => {
