@@ -8,6 +8,14 @@ class Category extends Model {
                     type: Sequelize.STRING,
                     unique: true,
                     allowNull: false,
+                    set(value) {
+                        // Capitalize each word
+                        const formattedName = value
+                            .split(' ')
+                            .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+                            .join(' ');
+                        this.setDataValue('name', formattedName);
+                    }
                 },
                 description: {
                     type: Sequelize.STRING,

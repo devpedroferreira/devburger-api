@@ -5,14 +5,16 @@ import { resolve, extname } from 'path';
 const fileFilter = (req, file, callback) => {
     // Allowed image formats
     const allowedMimes = [
+        'image/jpeg',
         'image/jpg',
-        'image/png'
+        'image/png',
+        'image/pjpeg'  // Progressive JPEG
     ];
 
     if (allowedMimes.includes(file.mimetype)) {
         callback(null, true);
     } else {
-        callback(new Error('Formato inválido. Apenas JPG e PNG são permitidos.'));
+        callback(new Error('Formato inválido. Apenas JPG/JPEG e PNG são permitidos.'));
     }
 };
 
@@ -26,10 +28,7 @@ const uploadConfig = {
                 return callback(null, filename);
             },
         }),
-        fileFilter,
-        limits: {
-            fileSize: 40 * 1024 * 1024 // 40MB para imagens 4K não comprimidas
-        }
+        fileFilter
     },
     
     // Configuração para produtos
@@ -41,10 +40,7 @@ const uploadConfig = {
                 return callback(null, filename);
             },
         }),
-        fileFilter,
-        limits: {
-            fileSize: 40 * 1024 * 1024 // 40MB para imagens 4K não comprimidas
-        }
+        fileFilter
     },
 };
 
