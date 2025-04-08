@@ -9,6 +9,10 @@ class Product extends Model {
                     unique: true,
                     allowNull: false
                 },
+                description: {
+                    type: Sequelize.TEXT,
+                    allowNull: true,
+                },
                 price: {
                     type: Sequelize.DECIMAL(6, 2),
                     allowNull: false,
