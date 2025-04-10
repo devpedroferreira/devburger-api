@@ -17,6 +17,7 @@ class ProductController {
           .positive('Price must be a positive value')
           .required('Price is required'),
         category_id: Yup.number().required('Category is required'),
+        description: Yup.string().required('Description is required'),
         offer: Yup.boolean().default(false)
       });
 
@@ -29,7 +30,7 @@ class ProductController {
       }
 
       // Extract request data
-      const { name, price, category_id, offer } = req.body;
+      const { name, price, category_id, description, offer } = req.body;
 
       // Check if category exists
       const category = await Category.findByPk(Number(category_id));
@@ -45,8 +46,9 @@ class ProductController {
         name,
         price: Number(price),
         category_id: Number(category_id),
+        description,
         path,
-        offer: offer||false
+        offer: offer || false
       });
 
       // Return created product with category information
@@ -138,6 +140,7 @@ class ProductController {
                 .positive('Price must be a positive value')
                 .required('Price is required'),
             category_id: Yup.number().required('Category is required'),
+            description: Yup.string().required('Description is required'),
             offer: Yup.boolean()
         });
 
@@ -148,7 +151,7 @@ class ProductController {
         const { id } = req.params;
 
         // Extract updated fields from request body
-        const { name, price, category_id, offer } = req.body;
+        const { name, price, category_id, description, offer } = req.body;
 
         // Find product by ID
         const product = await Product.findByPk(id);
@@ -173,6 +176,7 @@ class ProductController {
             name,
             price: Number(price),
             category_id: Number(category_id),
+            description,
             path,
             offer: offer !== undefined ? offer : product.offer
         });
@@ -205,7 +209,7 @@ class ProductController {
 
         return res.status(500).json({ error: 'Internal server error' });
     }
-};
+  };
 
   //update offer
   async updateOffer(req, res) {
@@ -246,6 +250,6 @@ class ProductController {
       return res.status(500).json({ error: 'Internal server error' });
     }
   };
+}
 
-}// end
 export default new ProductController();
