@@ -26,8 +26,8 @@ router.post('/session', SessionController.store);
 router.use(authCheck); // All routes below require authentication
 
 // Products routes
-router.post('/products', uploadProduct.single('file'), ProductController.store);
-router.put('/products/:id', uploadProduct.single('file'), ProductController.update);// update
+router.post('/uploads/products', uploadProduct.single('file'), ProductController.store);
+router.put('/uploads/products/:id', uploadProduct.single('file'), ProductController.update);// update
 router.get('/products', ProductController.index); // list all
 router.patch('/products/:id/offer', ProductController.updateOffer); // update offer
 router.get('/products/:category_id', ProductController.show); // list to category
@@ -36,8 +36,8 @@ router.get('/products/:category_id', ProductController.show); // list to categor
 // Categories routes
 router.get('/categories', CategoryController.index);
 router.get('/categories/:id', CategoryController.show);
-router.post('/categories', uploadCategory.single('file'), CategoryController.store);
-router.put('/categories/:id', uploadCategory.single('file'), CategoryController.update);
+router.post('/uploads/categories', uploadCategory.single('file'), CategoryController.store);
+router.put('/uploads/categories/:id', uploadCategory.single('file'), CategoryController.update);
 router.delete('/categories/:id', CategoryController.delete);
 
 // Orders routes
